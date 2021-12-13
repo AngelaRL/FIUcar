@@ -3,9 +3,9 @@ public class carro {
     String fabricante;
     String modelo;
     int year;
-    int precio;
+    double precio;
 
-    public carro(String VIN, String fabricante, String modelo, int year, int precio) {
+    public carro(String VIN, String fabricante, String modelo, int year, double precio) {
         this.VIN = VIN;
         this.fabricante = fabricante;
         this.modelo = modelo;

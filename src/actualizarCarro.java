@@ -1,7 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class actualizarCarro extends JFrame{
+public class actualizarCarro extends JFrame {
     private JPanel panel;
     private JTextField vin;
     private JTextField fabricante;
@@ -10,7 +12,7 @@ public class actualizarCarro extends JFrame{
     private JTextField precio;
     private manejadordedatos manejador;
 
-    public actualizarCarro(carro carro){
+    public actualizarCarro(carro carro) {
         manejador = manejadordedatos.getInstancia();
         this.setSize(450, 600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -22,7 +24,7 @@ public class actualizarCarro extends JFrame{
         texto(carro);
     }
 
-    private void panel(){
+    private void panel() {
         panel = new JPanel();
         panel.setLayout(null);
         panel.setBackground(Color.gray);
@@ -30,7 +32,7 @@ public class actualizarCarro extends JFrame{
 
     }
 
-    private void etiqueta(){
+    private void etiqueta() {
         JLabel ins = new JLabel("Realize los cambios deseados en los campos correspondientes ");
         ins.setBounds(30, 30, 400, 20);
         ins.setForeground(Color.white);
@@ -62,21 +64,48 @@ public class actualizarCarro extends JFrame{
         panel.add(pre);
     }
 
-    private void boton(){
+    private void boton() {
         JButton ini = new JButton("Actualizar");
         ini.setBounds(80, 400, 250, 25);
+
+        ini.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!vin.getText().equals("") && !fabricante.getText().equals("") && !modelo.getText().equals("") && !año.getText().equals("") && !precio.getText().equals("")) {
+                    if (manejador.verificarNumero(año.getText()) && manejador.verificarNumero(precio.getText())) {
+
+                        manejador.modificarCarro(vin.getText(), fabricante.getText(), modelo.getText(), Integer.parseInt(año.getText()), Integer.parseInt(precio.getText()));
+
+                        moduloAdmin ma = new moduloAdmin();
+                        ma.setVisible(true);
+                        dispose();
+
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(panel, "Debe llenar todos los campos");
+                }
+            }
+        });
 
         JButton regresar = new JButton("Regresar");
         regresar.setBounds(80, 450, 250, 25);
         panel.add(regresar);
 
+        regresar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                moduloAdmin ma = new moduloAdmin();
+                ma.setVisible(true);
+                dispose();
+            }
+        });
 
         panel.add(ini);
         panel.add(regresar);
 
     }
 
-    private void texto(carro carro){
+    private void texto(carro carro) {
         vin = new JTextField(String.valueOf(carro.VIN));
         vin.setBounds(150, 100, 200, 25);
         panel.add(vin);

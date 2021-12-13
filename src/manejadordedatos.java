@@ -63,9 +63,6 @@ public class manejadordedatos {
         return verificar;
     }
 
-    /*public boolean verificarUsuario(int codigo){
-
-    }*/
 
     public boolean tipoUsuario(String correo) {                              //para saber si es el admin o si es un vendedor
         boolean verificar = false;
@@ -110,31 +107,54 @@ public class manejadordedatos {
         return vacio;
     }
 
-    public cliente buscarCliente(int dpi) {                             // para buscar los datos del cliente
-        for (int i = 0; i < contadorClientes; i++) {
-            if (clientes[i] != null) {
-                if (clientes[i].dpi == dpi) {
-                    return new cliente(clientes[i].dpi, clientes[i].nit, clientes[i].nombre, clientes[i].genero,clientes[i].correo);
+    public carro buscarCarro(int vin) {                             // para buscar los datos del vendedor
+        for (int i = 0; i < contadorCarros; i++) {
+            if (carros[i] != null) {
+                if (Integer.parseInt(carros[i].VIN) == vin) {
+                    return new carro(carros[i].VIN, carros[i].fabricante, carros[i].modelo, carros[i].year, (double) carros[i].precio);
                 }
             }
         }
         return null;
     }
 
-    public boolean verificarNumero(String numero){          //saber si es numero o no
+    public vendedor buscarVendedor(int dpi) {                             // para buscar los datos del vendedor
+        for (int i = 0; i < contadorVendedores; i++) {
+            if (vendores[i] != null) {
+                if (vendores[i].dpi == dpi) {
+                    return new vendedor(vendores[i].dpi, vendores[i].nombre, vendores[i].ventas, vendores[i].genero, vendores[i].correo, vendores[i].password);
+                }
+            }
+        }
+        return null;
+    }
+
+    public cliente buscarCliente(int dpi) {                             // para buscar los datos del cliente
+        for (int i = 0; i < contadorClientes; i++) {
+            if (clientes[i] != null) {
+                if (clientes[i].dpi == dpi) {
+                    return new cliente(clientes[i].dpi, clientes[i].nit, clientes[i].nombre, clientes[i].genero, clientes[i].correo);
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean verificarNumero(String numero) {          //saber si es numero o no
         try {
             Integer.parseInt(numero);
             return true;
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return false;
         }
     }
 
-    public boolean verificarCliente(int dpi){              // verificar si no existe ya el num de dpi
+
+    public boolean verificarCarro(String vin) {              // verificar si no existe ya el num de dpi
         boolean verificar = false;
-        for (int i=0; i<contadorClientes; i++){
-            if (clientes[i] != null){
-                if (clientes[i].dpi == dpi){
+        for (int i = 0; i < carros.length; i++) {
+            if (carros[i] != null) {
+                if (carros[i].VIN.equals(vin)) {
                     verificar = true;
                     return verificar;
                 }
@@ -143,11 +163,12 @@ public class manejadordedatos {
         return verificar;
     }
 
-    public boolean verificarNit(int nit){               // verificar que no existe el nit
-        boolean verificar=false;
-        for (int i=0; i<contadorClientes; i++){
-            if (clientes[i] != null){
-                if (clientes[i].nit == nit){
+
+    public boolean verificarVendedor(int dpi) {              // verificar si no existe ya el num de dpi
+        boolean verificar = false;
+        for (int i = 0; i < contadorVendedores; i++) {
+            if (vendores[i] != null) {
+                if (vendores[i].dpi == dpi) {
                     verificar = true;
                     return verificar;
                 }
@@ -156,25 +177,151 @@ public class manejadordedatos {
         return verificar;
     }
 
-    public void agregarCliente(cliente nuevo){
+
+    public boolean verificarCliente(int dpi) {              // verificar si no existe ya el num de dpi
+        boolean verificar = false;
+        for (int i = 0; i < contadorClientes; i++) {
+            if (clientes[i] != null) {
+                if (clientes[i].dpi == dpi) {
+                    verificar = true;
+                    return verificar;
+                }
+            }
+        }
+        return verificar;
+    }
+
+    public boolean verificarNit(int nit) {               // verificar que no existe el nit
+        boolean verificar = false;
+        for (int i = 0; i < contadorClientes; i++) {
+            if (clientes[i] != null) {
+                if (clientes[i].nit == nit) {
+                    verificar = true;
+                    return verificar;
+                }
+            }
+        }
+        return verificar;
+    }
+
+    public void agregarCarro(carro nuevo) {
+        contadorCarros++;
+        for (int i = 0; i < carros.length; i++) {
+            if (carros[i] == null) {
+                carros[i] = nuevo;
+                break;
+            }
+        }
+    }
+
+
+    public void agregarVendedor(vendedor nuevo) {
+        contadorVendedores++;
+        //seguirVendedor(contadorVendedores);
+        for (int i = 0; i < contadorVendedores; i++) {
+            if (vendores[i] == null) {
+                vendores[i] = nuevo;
+                System.out.println(nuevo.nombre);
+                break;
+
+            }
+        }
+    }
+
+    public boolean seguirVendedor(int tamaño) {
+        boolean verifica = false;
+        if (tamaño < vendores.length) {
+            verifica = true;
+            return verifica;
+        }
+        return verifica;
+    }
+
+    public void agregarCliente(cliente nuevo) {
         contadorClientes++;
-        for (int i=0; i<contadorClientes;i++){
-            if (clientes[i] == null){
+        for (int i = 0; i < contadorClientes; i++) {
+            if (clientes[i] == null) {
                 clientes[i] = nuevo;
                 break;
             }
         }
     }
 
-    public void modificarCliente(int dpi, int nit, String nombre, char genero, String correo){      //para editar los datos del cliente
-        for (int i=0; i<contadorClientes; i++){
-            if (clientes[i] !=null){
-                if (clientes[i].dpi == dpi){
+    public void modificarCarro(String VIN, String fabricante, String modelo, int year, int precio) {      //para editar los datos del cliente
+        for (int i = 0; i < contadorCarros; i++) {
+            if (carros[i] != null) {
+                if (carros[i].VIN == VIN) {                    //realiza la busqueda por medio del dpi
+                    carros[i].fabricante = fabricante;
+                    carros[i].modelo = modelo;
+                    carros[i].year = year;
+                    carros[i].precio = precio;
+
+                }
+            }
+        }
+    }
+
+    public void modificarVendedor(int dpi, String nombre, int ventas, char genero, String correo, String password) {      //para editar los datos del cliente
+        for (int i = 0; i < contadorVendedores; i++) {
+            if (vendores[i] != null) {
+                if (vendores[i].dpi == dpi) {                    //realiza la busqueda por medio del dpi
+                    vendores[i].nombre = nombre;
+                    vendores[i].ventas = ventas;
+                    vendores[i].genero = genero;
+                    vendores[i].correo = correo;
+                    vendores[i].password = password;
+
+                }
+            }
+        }
+    }
+
+    public void modificarCliente(int dpi, int nit, String nombre, char genero, String correo) {      //para editar los datos del cliente
+        for (int i = 0; i < contadorClientes; i++) {
+            if (clientes[i] != null) {
+                if (clientes[i].dpi == dpi) {
                     clientes[i].nit = nit;
                     clientes[i].nombre = nombre;
                     clientes[i].genero = genero;
                     clientes[i].correo = correo;
 
+                }
+            }
+        }
+    }
+
+
+    public void eliminarCarro(int vin) {
+        for (int i = 0; i < contadorCarros; i++) {
+            if (carros[i] != null) {
+                if (Integer.parseInt(carros[i].VIN) == vin) {
+                    carros[i] = null;
+                    contadorCarros--;
+                    break;
+                }
+            }
+        }
+    }
+
+    public void eliminarVendedor(int dpi) {
+        for (int i = 0; i < contadorVendedores; i++) {
+            if (vendores[i] != null) {
+                if (vendores[i].dpi == dpi) {
+                    vendores[i] = null;
+                    contadorVendedores--;
+                    break;
+                }
+            }
+        }
+    }
+
+    public void eliminarCliente(int dpi) {
+        for (int i = 0; i < contadorClientes; i++) {
+            if (clientes[i] != null) {
+                if (clientes[i].dpi == dpi) {
+                    clientes[i] = null;
+                    contadorClientes--;
+                    break;
                 }
             }
         }

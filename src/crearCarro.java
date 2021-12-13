@@ -1,5 +1,9 @@
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class crearCarro extends JFrame{
     private JPanel panel;
@@ -65,9 +69,46 @@ public class crearCarro extends JFrame{
         JButton ini = new JButton("Agregar");
         ini.setBounds(80, 400, 250, 25);
 
+        ini.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!vin.getText().equals("") && !fabricante.getText().equals("") && !modelo.getText().equals("") && !año.getText().equals("") && !precio.getText().equals("")){
+                    if (manejador.verificarNumero(año.getText()) && manejador.verificarNumero(precio.getText())){
+                        if (!manejador.verificarCarro(vin.getText())){
+
+                            manejador.agregarCarro(new carro(vin.getText(), fabricante.getText(), modelo.getText(), Integer.parseInt(año.getText()), Integer.parseInt(precio.getText())));
+
+                            vin.setText("");
+                            fabricante.setText("");
+                            modelo.setText("");
+                            año.setText("");
+                            precio.setText("");
+
+                        }else {
+                            JOptionPane.showMessageDialog(panel,"El VIN ya existe");
+                        }
+                    }else {
+                        JOptionPane.showMessageDialog(panel, "Ingrese numeros en los campos correspondientes");
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(panel, "Debe llenar todos los campos");
+                }
+
+            }
+        });
+
         JButton regresar = new JButton("Regresar");
         regresar.setBounds(80, 450, 250, 25);
         panel.add(regresar);
+
+        regresar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                moduloAdmin ma = new moduloAdmin();
+                ma.setVisible(true);
+                dispose();
+            }
+        });
 
 
         panel.add(ini);

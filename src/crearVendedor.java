@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class crearVendedor extends JFrame {
     private manejadordedatos manejador;
@@ -15,7 +17,7 @@ public class crearVendedor extends JFrame {
         manejador = manejadordedatos.getInstancia();
         this.setSize(450, 600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Actualizar datos cliente");
+        setTitle("Agregar nuevo vendedor");
         setLocationRelativeTo(null);
         panel();
         etiqueta();
@@ -73,9 +75,46 @@ public class crearVendedor extends JFrame {
         JButton ini = new JButton("Agregar");
         ini.setBounds(80, 400, 250, 25);
 
+        ini.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!dpi.getText().equals("") && !nombre.getText().equals("") && !ventas.getText().equals("") && !correo.getText().equals("") && !password.getText().equals("")){
+                    if (manejador.verificarNumero(dpi.getText())&& manejador.verificarNumero(ventas.getText())){
+                        if (!manejador.verificarVendedor(Integer.parseInt(dpi.getText()))){
+
+                            manejador.agregarVendedor(new vendedor(Integer.parseInt(dpi.getText()), nombre.getText(), Integer.parseInt(ventas.getText()), lista.getSelectedItem().toString().charAt(0), correo.getText(), password.getText()));
+
+                            dpi.setText("");                                                                //para limpiar las casillas al haber creado el nuevo vendedor
+                            nombre.setText("");
+                            ventas.setText("");
+                            correo.setText("");
+                            password.setText("");
+                            lista.setSelectedIndex(0);
+
+                        }else {
+                            JOptionPane.showMessageDialog(panel,"el DPI ya existe");
+                        }
+                    }else {
+                        JOptionPane.showMessageDialog(panel, "Ingrese numeros en las casillas correspondientes");
+                    }
+                }else {
+                    JOptionPane.showMessageDialog(panel, "Debe de llenar todos los campos");
+                }
+            }
+        });
+
 
         JButton regresar = new JButton("Regresar");
         regresar.setBounds(80, 450, 250, 25);
+
+        regresar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                moduloAdmin adm = new moduloAdmin();
+                adm.setVisible(true);
+                dispose();
+            }
+        });
 
 
         panel.add(ini);
@@ -95,7 +134,7 @@ public class crearVendedor extends JFrame {
         panel.add(ventas);
 
         correo = new JTextField();
-        ventas.setBounds(150, 300, 200, 25);
+        correo.setBounds(150, 300, 200, 25);
         panel.add(ventas);
 
         password = new JTextField();

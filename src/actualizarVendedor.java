@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class actualizarVendedor extends JFrame {
     private manejadordedatos manejador;
@@ -15,7 +17,7 @@ public class actualizarVendedor extends JFrame {
         manejador = manejadordedatos.getInstancia();
         this.setSize(450, 600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Actualizar datos cliente");
+        setTitle("Actualizar datos vendedor");
         setLocationRelativeTo(null);
         panel();
         etiqueta();
@@ -75,9 +77,39 @@ public class actualizarVendedor extends JFrame {
         JButton ini = new JButton("Actualizar");
         ini.setBounds(80, 400, 250, 25);
 
+        ini.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!dpi.getText().equals("") && !nombre.getText().equals("") && !ventas.getText().equals("") && !correo.getText().equals("") && !password.getText().equals("")){
+                    if (manejador.verificarNumero(dpi.getText()) && manejador.verificarNumero(ventas.getText()) ){
+
+                        manejador.modificarVendedor(Integer.parseInt(dpi.getText()), nombre.getText(), Integer.parseInt(ventas.getText()),lista.getSelectedItem().toString().charAt(0), correo.getText(), password.getText());
+
+                        moduloAdmin ma = new moduloAdmin();
+                        ma.setVisible(true);
+                        dispose();
+
+                    }else {
+                        JOptionPane.showMessageDialog(panel, "Ingrese numeros en las casillas correspondientes");
+                    }
+                }else {
+                    JOptionPane.showMessageDialog(panel, "debe llenar todos los campos");
+                }
+            }
+        });
+
 
         JButton regresar = new JButton("Regresar");
         regresar.setBounds(80, 450, 250, 25);
+
+        regresar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                moduloAdmin ma = new moduloAdmin();
+                ma.setVisible(true);
+                dispose();
+            }
+        });
 
 
         panel.add(ini);
@@ -100,7 +132,7 @@ public class actualizarVendedor extends JFrame {
         panel.add(ventas);
 
         correo = new JTextField(String.valueOf(vendedor.correo));
-        ventas.setBounds(150, 300, 200, 25);
+        correo.setBounds(150, 300, 200, 25);
         panel.add(ventas);
 
         password = new JTextField(vendedor.password);
