@@ -219,23 +219,16 @@ public class manejadordedatos {
         contadorVendedores++;
         //seguirVendedor(contadorVendedores);
         for (int i = 0; i < contadorVendedores; i++) {
-            if (vendores[i] == null) {
-                vendores[i] = nuevo;
-                System.out.println(nuevo.nombre);
-                break;
-
+            if (i != vendores.length) {
+                if (vendores[i] == null) {
+                    vendores[i] = nuevo;
+                    System.out.println(nuevo.nombre);
+                    break;
+                }
             }
         }
     }
 
-    public boolean seguirVendedor(int tamaño) {
-        boolean verifica = false;
-        if (tamaño < vendores.length) {
-            verifica = true;
-            return verifica;
-        }
-        return verifica;
-    }
 
     public void agregarCliente(cliente nuevo) {
         contadorClientes++;

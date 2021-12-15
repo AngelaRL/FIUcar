@@ -7,6 +7,7 @@ public class moduloAdmin extends JFrame {
     panelCarro panelcarro;
     panelVendedor panelvendedor;
     panelCliente panelcliente;
+    panelConfiguracion panelConfiguracion;
     private JTabbedPane pestañas;
     private manejadordedatos manejador;
 
@@ -50,11 +51,13 @@ public class moduloAdmin extends JFrame {
         panelcarro = new panelCarro(this);
         panelvendedor = new panelVendedor(this);
         panelcliente = new panelCliente(this);
+        panelConfiguracion = new panelConfiguracion(this);
 
 
         pestañas.add("Carros", panelcarro);
         pestañas.add("Vendedores", panelvendedor);
         pestañas.add("Clientes", panelcliente);
+        pestañas.add("Configuracion",panelConfiguracion);
         pestañas.setBounds(0, 30, 850, 650);
         add(pestañas);
 

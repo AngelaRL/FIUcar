@@ -79,15 +79,20 @@ public class panelVendedor extends JPanel {
                         }
 
                         Gson gson = new Gson();
-                        vendedor[] ven = gson.fromJson(texto, vendedor[].class);
+                        vendedor[] ven = gson.fromJson(texto, vendedor[].class);        //Lo convierte a arreglo tipo vendedor
 
                         for (vendedor recorrer : ven) {                         //recorrer, recorre cada una de los objetos dentro del arreglo vendedor
 
                             if (!manejador.verificarVendedor(recorrer.dpi)) {
+                                System.out.println("entra");
                                 manejador.agregarVendedor(new vendedor(recorrer.dpi, recorrer.nombre, recorrer.ventas, recorrer.genero, recorrer.correo, recorrer.password));
                             }
+                            // System.out.println("aqui"+manejadordedatos.getInstancia().vendores);
                         }
+                        // while (manejador.contadorVendedores < manejador.vendores.length + 1) {
                         actualizarTabla();
+                        //}
+
 
                     } catch (FileNotFoundException ex) {
                         Logger.getLogger(panelVendedor.class.getName()).log(Level.SEVERE, null, ex);
@@ -225,9 +230,11 @@ public class panelVendedor extends JPanel {
 
     public void actualizarTabla() {
         modelo.setRowCount(0);
-        for (int i = 0; i < manejador.vendores.length ; i++) {
-            modelo.addRow(manejador.vendores[i].getAsRow());
+        while (manejador.contadorVendedores < manejadordedatos.getInstancia().vendores.length) {
+            for (int i = 0; i < manejador.contadorVendedores; i++) {
+                modelo.addRow(manejador.vendores[i].getAsRow());
+            }
+            tabla.repaint();
         }
-        tabla.repaint();
     }
 }
