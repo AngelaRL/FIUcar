@@ -4,30 +4,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class moduloVendedor extends JFrame {
-    panelnuevaVenta panelnuevaVenta;
-    panelVentas panelVentas;
+    panelVentas panelventas;
+    panelVisualizacion panelVisualizacion;
     private JTabbedPane pestañas;
+    private manejadordedatos manejador;
 
     public moduloVendedor() {
+        manejador = manejadordedatos.getInstancia();
         this.setSize(850, 700);
         this.setLayout(null);
+        this.setResizable(false);
         this.getContentPane().setBackground(Color.gray);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("MODULO VENDEDORES");
+        setTitle("VENTAS");
         setLocationRelativeTo(null);
         pestañas = new JTabbedPane();
         iniciarComponentes();
+
     }
 
     private void iniciarComponentes() {
-        JLabel saludo = new JLabel("Bienvenido ");
-        saludo.setBounds(580, 30, 70, 20);
-        this.add(saludo);
-
-        JLabel nom = new JLabel();
-        nom.setBounds(650, 30, 200, 20);
-        this.add(nom);
-
         JButton salir = new JButton("Cerrar sesion");
         salir.setBounds(700, 0, 150, 25);
         salir.setBackground(Color.orange);
@@ -41,17 +37,16 @@ public class moduloVendedor extends JFrame {
                 dispose();
             }
         });
-
         pestañas = new JTabbedPane();
-        panelnuevaVenta = new panelnuevaVenta(this);
-        panelVentas = new panelVentas(this);
+        panelVisualizacion = new panelVisualizacion(this);
+        panelventas = new panelVentas(this,panelVisualizacion);
 
-        pestañas.add("Nueva venta", panelnuevaVenta);
-        pestañas.add("Ventas", panelVentas);
+
+
+        pestañas.add("Ventas", panelventas);
+        pestañas.add("Visualizacion", panelVisualizacion);
         pestañas.setBounds(0, 30, 850, 650);
         add(pestañas);
 
     }
-
-}
 }

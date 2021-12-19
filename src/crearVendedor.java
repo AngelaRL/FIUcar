@@ -66,9 +66,9 @@ public class crearVendedor extends JFrame {
         panel.add(cor);
 
         JLabel cont = new JLabel("Contraseña: ");
-        cor.setBounds(50, 330, 100, 20);
-        cor.setForeground(Color.white);
-        panel.add(cor);
+        cont.setBounds(50, 335, 100, 20);
+        cont.setForeground(Color.white);
+        panel.add(cont);
     }
 
     private void boton(){
@@ -135,10 +135,10 @@ public class crearVendedor extends JFrame {
 
         correo = new JTextField();
         correo.setBounds(150, 300, 200, 25);
-        panel.add(ventas);
+        panel.add(correo);
 
         password = new JTextField();
-        password.setBounds(150, 330, 200, 25);
+        password.setBounds(150, 335, 200, 25);
         panel.add(password);
 
     }

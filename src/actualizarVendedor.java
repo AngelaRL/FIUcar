@@ -66,9 +66,9 @@ public class actualizarVendedor extends JFrame {
         panel.add(cor);
 
         JLabel cont = new JLabel("Contraseña: ");
-        cor.setBounds(50, 330, 100, 20);
-        cor.setForeground(Color.white);
-        panel.add(cor);
+        cont.setBounds(50, 330, 100, 20);
+        cont.setForeground(Color.white);
+        panel.add(cont);
 
 
     }
@@ -133,7 +133,7 @@ public class actualizarVendedor extends JFrame {
 
         correo = new JTextField(String.valueOf(vendedor.correo));
         correo.setBounds(150, 300, 200, 25);
-        panel.add(ventas);
+        panel.add(correo);
 
         password = new JTextField(vendedor.password);
         password.setBounds(150, 330, 200, 25);

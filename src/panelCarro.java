@@ -2,6 +2,11 @@ import com.google.gson.Gson;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -38,9 +43,25 @@ public class panelCarro extends JPanel {
 
     private void panel() {
         panel1 = new JPanel();
-        panel1.setBounds(570, 250, 200, 200);
+        panel1.setBounds(550, 250, 250, 250);
         this.add(panel1);
 
+
+        DefaultCategoryDataset datosBarra = new DefaultCategoryDataset();
+        if (manejador.carros[2] != null) {
+            datosBarra.setValue(manejador.carros[0].precio, manejador.carros[0].modelo, "Carro 1");
+            datosBarra.setValue(manejador.carros[1].precio, manejador.carros[1].modelo, "Carro 2");
+            datosBarra.setValue(manejador.carros[2].precio, manejador.carros[2].modelo, "Carro 3");
+
+            JFreeChart barra = ChartFactory.createBarChart("Top 3 carros precios.", "producto", "cantidad", datosBarra, PlotOrientation.VERTICAL, true, true, false);
+            ChartPanel panel = new ChartPanel(barra);
+            panel.setMouseWheelEnabled(true);
+            panel.setPreferredSize(new Dimension(250, 250));
+
+            panel1.add(panel, BorderLayout.NORTH);
+
+            panel1.revalidate();
+        }
 
     }
 
@@ -51,9 +72,14 @@ public class panelCarro extends JPanel {
         crear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                crearCarro nc = new crearCarro();
-                nc.setVisible(true);
-                ventana.dispose();
+                if (manejador.contadorCarros < 50) {
+                    crearCarro nc = new crearCarro();
+                    nc.setVisible(true);
+                    panel();
+                    ventana.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(null, "NO se puede agregar mas carros");
+                }
             }
         });
 
@@ -82,10 +108,13 @@ public class panelCarro extends JPanel {
 
                         for (carro recorrer : cr) {
                             if (!manejador.verificarCarro(recorrer.VIN)) {
-                                manejador.agregarCarro(new carro(recorrer.VIN, recorrer.fabricante, recorrer.modelo, recorrer.year, recorrer.precio));
+                                if (manejador.contadorCarros < 50) {
+                                    manejador.agregarCarro(new carro(recorrer.VIN, recorrer.fabricante, recorrer.modelo, recorrer.year, recorrer.precio));
+                                }
                             }
                         }
                         actualizarTabla();
+                        panel();
 
                     } catch (FileNotFoundException ex) {
                         Logger.getLogger(panelCarro.class.getName()).log(Level.SEVERE, null, ex);
@@ -103,8 +132,9 @@ public class panelCarro extends JPanel {
             public void actionPerformed(ActionEvent e) {
 
                 if (tabla.getSelectedRow() >= 0) {
-                    actualizarCarro ac = new actualizarCarro(manejadordedatos.getInstancia().buscarCarro(Integer.parseInt(modelo.getValueAt(tabla.getSelectedRow(), 0).toString())));
+                    actualizarCarro ac = new actualizarCarro(manejadordedatos.getInstancia().buscarCarro((modelo.getValueAt(tabla.getSelectedRow(), 0).toString())));
                     ac.setVisible(true);
+                    panel();
                     ventana.dispose();
                 } else {
                     JOptionPane.showMessageDialog(ventana, "seleccione algo de la lista o no hay datos");
@@ -121,8 +151,8 @@ public class panelCarro extends JPanel {
                 if (tabla.getSelectedRow() >= 0) {
                     manejador.eliminarCarro(Integer.parseInt(modelo.getValueAt(tabla.getSelectedRow(), 0).toString()));
                     modelo.removeRow(tabla.getSelectedRow());
-                }else {
-                    JOptionPane.showMessageDialog(ventana,"Seleccione elemento de la lista, o la lista esta vacia");
+                } else {
+                    JOptionPane.showMessageDialog(ventana, "Seleccione elemento de la lista, o la lista esta vacia");
                 }
             }
         });
@@ -138,7 +168,7 @@ public class panelCarro extends JPanel {
                 Document doc = new Document();
                 FileOutputStream ficheroPdf = null;
                 try {
-                    ficheroPdf = new FileOutputStream("Carros.pfd");
+                    ficheroPdf = new FileOutputStream("Carros.pdf");
                 } catch (FileNotFoundException fileNotFoundException) {
                     fileNotFoundException.printStackTrace();
                 }
@@ -168,11 +198,13 @@ public class panelCarro extends JPanel {
                 tabla.addCell("Año");
                 tabla.addCell("Precio");
                 for (int i = 0; i < manejador.carros.length; i++) {
-                    tabla.addCell((manejador.carros[i].VIN));
-                    tabla.addCell((manejador.carros[i].fabricante));
-                    tabla.addCell((manejador.carros[i].modelo));
-                    tabla.addCell(String.valueOf(manejador.carros[i].year));
-                    tabla.addCell(String.valueOf(manejador.carros[i].precio));
+                    if (manejador.carros[i]!=null) {
+                        tabla.addCell((manejador.carros[i].VIN));
+                        tabla.addCell((manejador.carros[i].fabricante));
+                        tabla.addCell((manejador.carros[i].modelo));
+                        tabla.addCell(String.valueOf(manejador.carros[i].year));
+                        tabla.addCell(String.valueOf(manejador.carros[i].precio));
+                    }
                 }
                 try {
                     doc.add(tabla);

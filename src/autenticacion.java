@@ -16,7 +16,7 @@ public class autenticacion extends JFrame {
         datos = manejadordedatos.getInstancia();
         this.setSize(500, 250);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setTitle("AUTENTICACION");
+        this.setTitle("Calificacion");
         this.setLocationRelativeTo(null);
         panel();
         etiqueta();

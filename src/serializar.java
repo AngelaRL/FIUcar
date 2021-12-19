@@ -1,5 +1,6 @@
 import java.io.*;
 
+
 public class serializar {
 
     public static void serialize(String pathname, Object object) {      // Serializar un objeto

@@ -1,6 +1,9 @@
 import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 
-public class vendedor {
+import java.io.Serializable;
+
+
+public class vendedor implements Serializable {
     int dpi;
     String nombre;
     int ventas;
@@ -16,8 +19,8 @@ public class vendedor {
     this.correo = correo;
     this.password=password;
 
-
     }
+
     public static String[] nameOfColumns = {
             "DPI",
             "Nombre",

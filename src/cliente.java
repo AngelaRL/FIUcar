@@ -1,4 +1,6 @@
-public class cliente {
+import java.io.Serializable;
+
+public class cliente implements Serializable {
     int dpi;
     int nit;
     String nombre;

@@ -2,6 +2,10 @@ import com.google.gson.Gson;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -33,16 +37,42 @@ public class panelCliente extends JPanel {
         agregartabla();
         boton();
         panel();
-        // if (manejador.clientes[0]!=null){
-        //   panel();
-        // }
     }
 
 
     private void panel() {
+
         panel3 = new JPanel();
         panel3.setBounds(570, 250, 200, 200);
         this.add(panel3);
+
+        int conM = 0;
+        int conF = 0;
+        for (int i = 0; i < manejador.contadorClientes; i++) {
+            if (String.valueOf(manejador.clientes[i].genero).equalsIgnoreCase("m")) {
+                conM++;
+            } else
+                conF++;
+        }
+
+        DefaultPieDataset datos = new DefaultPieDataset();
+        datos.setValue("Masculino", conM);
+        datos.setValue("Femenino", conF);
+
+        JFreeChart graficapai = ChartFactory.createPieChart(
+                "Genero de Clientes",       //titutlo
+                datos,                             //datos
+                true,                       //nobre de las categorias
+                true,                       //herramientas
+                false                          //generacion de url
+        );
+
+        ChartPanel panel = new ChartPanel(graficapai);
+        panel.setMouseWheelEnabled(true);
+        panel.setPreferredSize(new Dimension(200, 200));
+
+        panel3.add(panel, BorderLayout.NORTH);
+        panel3.revalidate();
     }
 
     private void boton() {
@@ -52,9 +82,14 @@ public class panelCliente extends JPanel {
         crear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                crearCliente nc = new crearCliente();
-                nc.setVisible(true);
-                ventana.dispose();
+                if (manejador.contadorClientes < 75) {
+                    crearCliente nc = new crearCliente();
+                    nc.setVisible(true);
+                    panel();
+                    ventana.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(null, "NO se puede agregar mas clientes");
+                }
             }
         });
 
@@ -83,10 +118,13 @@ public class panelCliente extends JPanel {
 
                         for (cliente recorrer : cl) {
                             if (!manejador.verificarCliente(recorrer.dpi)) {
-                                manejador.agregarCliente(new cliente(recorrer.dpi, recorrer.nit, recorrer.nombre, recorrer.genero, recorrer.correo));
+                                if (manejador.contadorClientes < 75) {
+                                    manejador.agregarCliente(new cliente(recorrer.dpi, recorrer.nit, recorrer.nombre, recorrer.genero, recorrer.correo));
+                                }
                             }
                         }
                         actualizarTabla();
+                        panel();
 
                     } catch (FileNotFoundException ex) {
                         Logger.getLogger(panelCliente.class.getName()).log(Level.SEVERE, null, ex);
@@ -105,6 +143,7 @@ public class panelCliente extends JPanel {
                 if (tabla.getSelectedRow() >= 0) {
                     actualizarCliente ac = new actualizarCliente(manejadordedatos.getInstancia().buscarCliente(Integer.parseInt(modelo.getValueAt(tabla.getSelectedRow(), 0).toString())));
                     ac.setVisible(true);
+                    panel();
                     ventana.dispose();
                 } else {
                     JOptionPane.showMessageDialog(ventana, "seleccione algo de la tabla o no hay datos");
@@ -139,7 +178,7 @@ public class panelCliente extends JPanel {
                 Document doc = new Document();
                 FileOutputStream ficheroPdf = null;
                 try {
-                    ficheroPdf = new FileOutputStream("Clientes.pfd");
+                    ficheroPdf = new FileOutputStream("Clientes.pdf");
                 } catch (FileNotFoundException fileNotFoundException) {
                     fileNotFoundException.printStackTrace();
                 }
@@ -169,11 +208,13 @@ public class panelCliente extends JPanel {
                 tabla.addCell("Genero");
                 tabla.addCell("Correo");
                 for (int i = 0; i < manejador.clientes.length; i++) {
-                    tabla.addCell(String.valueOf(manejador.clientes[i].dpi));
-                    tabla.addCell(String.valueOf(manejador.clientes[i].nit));
-                    tabla.addCell(String.valueOf(manejador.clientes[i].nombre));
-                    tabla.addCell(String.valueOf(manejador.clientes[i].genero));
-                    tabla.addCell(String.valueOf(manejador.clientes[i].correo));
+                    if (manejador.clientes[i] != null) {
+                        tabla.addCell(String.valueOf(manejador.clientes[i].dpi));
+                        tabla.addCell(String.valueOf(manejador.clientes[i].nit));
+                        tabla.addCell(String.valueOf(manejador.clientes[i].nombre));
+                        tabla.addCell(String.valueOf(manejador.clientes[i].genero));
+                        tabla.addCell(String.valueOf(manejador.clientes[i].correo));
+                    }
                 }
                 try {
                     doc.add(tabla);

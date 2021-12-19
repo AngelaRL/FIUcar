@@ -2,6 +2,10 @@ import com.google.gson.Gson;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -41,6 +45,34 @@ public class panelVendedor extends JPanel {
         panel2.setBounds(570, 250, 200, 200);
         this.add(panel2);
 
+        int conM = 0;
+        int conF = 0;
+        for (int i = 0; i < manejador.contadorVendedores; i++) {
+            if (String.valueOf(manejador.vendores[i].genero).equalsIgnoreCase("m")) {
+                conM++;
+            } else
+                conF++;
+        }
+
+        DefaultPieDataset datos = new DefaultPieDataset();
+        datos.setValue("Masculino", conM);
+        datos.setValue("Femenino", conF);
+
+        JFreeChart graficapai = ChartFactory.createPieChart(
+                "Genero de Vendedores",       //titutlo
+                datos,                             //datos
+                true,                       //nobre de las categorias
+                true,                       //herramientas
+                false                          //generacion de url
+        );
+
+        ChartPanel panel = new ChartPanel(graficapai);
+        panel.setMouseWheelEnabled(true);
+        panel.setPreferredSize(new Dimension(200, 200));
+
+        panel2.add(panel, BorderLayout.NORTH);
+        panel2.revalidate();
+
 
     }
 
@@ -51,10 +83,14 @@ public class panelVendedor extends JPanel {
         crear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                crearVendedor cv = new crearVendedor();
-                cv.setVisible(true);
-                ventana.dispose();
-
+                if (manejador.contadorVendedores < 50) {
+                    crearVendedor cv = new crearVendedor();
+                    cv.setVisible(true);
+                    panel();
+                    ventana.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(null, "NO se puede agregar mas vendedores");
+                }
             }
         });
 
@@ -84,14 +120,15 @@ public class panelVendedor extends JPanel {
                         for (vendedor recorrer : ven) {                         //recorrer, recorre cada una de los objetos dentro del arreglo vendedor
 
                             if (!manejador.verificarVendedor(recorrer.dpi)) {
-                                System.out.println("entra");
-                                manejador.agregarVendedor(new vendedor(recorrer.dpi, recorrer.nombre, recorrer.ventas, recorrer.genero, recorrer.correo, recorrer.password));
+                                if (manejador.contadorVendedores < 50) {
+                                    manejador.agregarVendedor(new vendedor(recorrer.dpi, recorrer.nombre, recorrer.ventas, recorrer.genero, recorrer.correo, recorrer.password));
+                                }
                             }
-                            // System.out.println("aqui"+manejadordedatos.getInstancia().vendores);
+
                         }
-                        // while (manejador.contadorVendedores < manejador.vendores.length + 1) {
+
                         actualizarTabla();
-                        //}
+                        panel();
 
 
                     } catch (FileNotFoundException ex) {
@@ -112,6 +149,7 @@ public class panelVendedor extends JPanel {
                 if (tabla.getSelectedRow() >= 0) {
                     actualizarVendedor ac = new actualizarVendedor(manejadordedatos.getInstancia().buscarVendedor(Integer.parseInt(modelo.getValueAt(tabla.getSelectedRow(), 0).toString())));
                     ac.setVisible(true);
+                    panel();
                     ventana.dispose();
                 } else {
                     JOptionPane.showMessageDialog(ventana, "no a seleccionado ningun dato de la lista");
@@ -145,7 +183,7 @@ public class panelVendedor extends JPanel {
                 Document doc = new Document();
                 FileOutputStream ficheroPdf = null;
                 try {
-                    ficheroPdf = new FileOutputStream("Vendedores.pfd");
+                    ficheroPdf = new FileOutputStream("Vendedores.pdf");
                 } catch (FileNotFoundException fileNotFoundException) {
                     fileNotFoundException.printStackTrace();
                 }
@@ -176,12 +214,14 @@ public class panelVendedor extends JPanel {
                 tabla.addCell("Correo");
                 tabla.addCell("password");
                 for (int i = 0; i < manejador.vendores.length; i++) {
-                    tabla.addCell(String.valueOf(manejador.vendores[i].dpi));
-                    tabla.addCell((manejador.vendores[i].nombre));
-                    tabla.addCell(String.valueOf(manejador.vendores[i].ventas));
-                    tabla.addCell(String.valueOf(manejador.vendores[i].genero));
-                    tabla.addCell((manejador.vendores[i].correo));
-                    tabla.addCell(manejador.vendores[i].password);
+                    if (manejador.vendores[i] != null) {
+                        tabla.addCell(String.valueOf(manejador.vendores[i].dpi));
+                        tabla.addCell((manejador.vendores[i].nombre));
+                        tabla.addCell(String.valueOf(manejador.vendores[i].ventas));
+                        tabla.addCell(String.valueOf(manejador.vendores[i].genero));
+                        tabla.addCell((manejador.vendores[i].correo));
+                        tabla.addCell(manejador.vendores[i].password);
+                    }
                 }
                 try {
                     doc.add(tabla);
@@ -230,11 +270,11 @@ public class panelVendedor extends JPanel {
 
     public void actualizarTabla() {
         modelo.setRowCount(0);
-        while (manejador.contadorVendedores < manejadordedatos.getInstancia().vendores.length) {
-            for (int i = 0; i < manejador.contadorVendedores; i++) {
-                modelo.addRow(manejador.vendores[i].getAsRow());
-            }
-            tabla.repaint();
+        //while (manejador.contadorVendedores < manejadordedatos.getInstancia().vendores.length) {
+        for (int i = 0; i < manejador.contadorVendedores; i++) {
+            modelo.addRow(manejador.vendores[i].getAsRow());
         }
+        tabla.repaint();
+        //}
     }
 }

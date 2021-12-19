@@ -1,23 +1,31 @@
 import org.omg.CORBA.PUBLIC_MEMBER;
 
+import java.io.File;
+import java.io.IOException;
+
 public class manejadordedatos {
     private static manejadordedatos instancia;
     public carro[] carros;
     public vendedor[] vendores;
     public cliente[] clientes;
+    public venta[] ventas;
     int contadorCarros;
     int contadorVendedores;
     int contadorClientes;
+    int contadorVentas;
+    String nombreUsuario;
 
 
     public manejadordedatos() {
         carros = new carro[50];
         vendores = new vendedor[50];
         clientes = new cliente[75];
+        ventas = new venta[100];
         contadorCarros = 0;
         contadorVendedores = 0;
         contadorClientes = 0;
-
+        contadorVentas = 0;
+        carga();
         contarIngresados();
     }
 
@@ -37,6 +45,11 @@ public class manejadordedatos {
                 contadorClientes++;
             }
         }
+        for (int i = 0; i < ventas.length; i++) {
+            if (ventas[i] != null) {
+                contadorVentas++;
+            }
+        }
 
     }
 
@@ -47,6 +60,19 @@ public class manejadordedatos {
         return instancia;
     }
 
+    public void carga() {
+        File directorioFile = new File("carros.bin");
+        File directorioFile2 = new File("vendedores.bin");
+        File directorioFile3 = new File("clientes.bin");
+        File directorioFile4 = new File("venta.bin");
+        if (directorioFile.exists() && directorioFile2.exists() && directorioFile3.exists() && directorioFile4.exists()) {
+            carros = (carro[]) serializar.deserialize("carros.bin");
+            vendores = (vendedor[]) serializar.deserialize("vendedores.bin");
+            clientes = (cliente[]) serializar.deserialize("clientes.bin");
+            ventas = (venta[]) serializar.deserialize("venta.bin");
+        }
+    }
+
     public boolean loginUsuario(String correo, String contraseña) {         // para verificar que tipo de usuario es
         boolean verificar = false;
         if ("admin@ipc1.com".equals(correo) && "admin".equals(contraseña)) {
@@ -55,6 +81,7 @@ public class manejadordedatos {
         } else {
             for (int i = 0; i < contadorVendedores; i++) {
                 if (vendores[i].correo.equals(correo) && vendores[i].password.equals(contraseña)) {
+                    nombreUsuario = vendores[i].nombre;
                     verificar = true;
                     return verificar;
                 }
@@ -107,10 +134,10 @@ public class manejadordedatos {
         return vacio;
     }
 
-    public carro buscarCarro(int vin) {                             // para buscar los datos del vendedor
+    public carro buscarCarro(String vin) {                             // para buscar los datos del vendedor
         for (int i = 0; i < contadorCarros; i++) {
             if (carros[i] != null) {
-                if (Integer.parseInt(carros[i].VIN) == vin) {
+                if ((carros[i].VIN).equals(vin)) {
                     return new carro(carros[i].VIN, carros[i].fabricante, carros[i].modelo, carros[i].year, (double) carros[i].precio);
                 }
             }
@@ -209,20 +236,20 @@ public class manejadordedatos {
         for (int i = 0; i < carros.length; i++) {
             if (carros[i] == null) {
                 carros[i] = nuevo;
+                reordenarDatos();
                 break;
             }
         }
+
     }
 
 
     public void agregarVendedor(vendedor nuevo) {
         contadorVendedores++;
-        //seguirVendedor(contadorVendedores);
         for (int i = 0; i < contadorVendedores; i++) {
             if (i != vendores.length) {
                 if (vendores[i] == null) {
                     vendores[i] = nuevo;
-                    System.out.println(nuevo.nombre);
                     break;
                 }
             }
@@ -319,4 +346,40 @@ public class manejadordedatos {
             }
         }
     }
+
+    public boolean agregarventaCarro(String nombreCliente, carro[] carrosc, String fecha) {
+        boolean agregar = false;
+        if (contadorVentas + 1 < 100) {
+            agregar = true;
+            for (int i = 0; i < contadorClientes; i++) {
+                if (nombreCliente.equals(clientes[i].nombre)) {
+                    venta aux = new venta(contadorVentas + 1, clientes[i].nit, clientes[i].nombre, carrosc, fecha);
+                    ventas[contadorVentas] = aux;
+                    try {
+                        new crearPdf(aux).creacion();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    contadorVentas++;
+                }
+            }
+
+        }
+        return agregar;
+    }
+
+    public void reordenarDatos() {
+        for (int i = 0; i < contadorCarros; i++) {
+            for (int j = 0; j < contadorCarros; j++) {
+                if ((j + 1) < carros.length && carros[j + 1] != null) {
+                    if (carros[j + 1].precio > carros[j].precio) {
+                        carro aux = new carro(carros[j].VIN, carros[j].fabricante, carros[j].modelo, carros[j].year, carros[j].precio);
+                        carros[j] = new carro(carros[j + 1].VIN, carros[j + 1].fabricante, carros[j + 1].modelo, carros[j + 1].year, carros[j + 1].precio);
+                        carros[j + 1] = new carro(aux.VIN, aux.fabricante, aux.modelo, aux.year, aux.precio);
+                    }
+                }
+            }
+        }
+    }
+
 }

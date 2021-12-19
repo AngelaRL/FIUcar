@@ -7,7 +7,7 @@ public class moduloAdmin extends JFrame {
     panelCarro panelcarro;
     panelVendedor panelvendedor;
     panelCliente panelcliente;
-    panelConfiguracion panelConfiguracion;
+   // panelConfiguracion panelConfiguracion;
     private JTabbedPane pestañas;
     private manejadordedatos manejador;
 
@@ -15,6 +15,7 @@ public class moduloAdmin extends JFrame {
         manejador = manejadordedatos.getInstancia();
         this.setSize(850, 700);
         this.setLayout(null);
+        this.setResizable(false);
         this.getContentPane().setBackground(Color.gray);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("ADMINISTRACION");
@@ -22,10 +23,6 @@ public class moduloAdmin extends JFrame {
         pestañas = new JTabbedPane();
         iniciarComponentes();
 
-        //panelsucur.actualizarTabla();
-        //panelproducto.actualizarTabla();
-        //panelcliente.actualizarTabla();
-        //panelvendedor.actualizarTabla();
     }
 
     private void iniciarComponentes() {
@@ -40,10 +37,10 @@ public class moduloAdmin extends JFrame {
                 autenticacion auten = new autenticacion();
                 auten.setVisible(true);
                 dispose();
-               // serializar.serialize("sucursales.bin", manejador.sucursales);
-               // serializar.serialize("productos.bin", manejador.productos);
-               // serializar.serialize("clientes.bin", manejador.clientes);
-               // serializar.serialize("usuarios.bin", manejador.usuarios);
+                serializar.serialize("carros.bin", manejador.carros);
+                serializar.serialize("vendedores.bin", manejador.vendores);
+                serializar.serialize("clientes.bin", manejador.clientes);
+                serializar.serialize("venta.bin", manejador.ventas);
 
             }
         });
@@ -51,13 +48,13 @@ public class moduloAdmin extends JFrame {
         panelcarro = new panelCarro(this);
         panelvendedor = new panelVendedor(this);
         panelcliente = new panelCliente(this);
-        panelConfiguracion = new panelConfiguracion(this);
+     //   panelConfiguracion = new panelConfiguracion(this);
 
 
         pestañas.add("Carros", panelcarro);
         pestañas.add("Vendedores", panelvendedor);
         pestañas.add("Clientes", panelcliente);
-        pestañas.add("Configuracion",panelConfiguracion);
+      //  pestañas.add("Configuracion",panelConfiguracion);
         pestañas.setBounds(0, 30, 850, 650);
         add(pestañas);
 

@@ -1,4 +1,6 @@
-public class carro {
+import java.io.Serializable;
+
+public class carro implements Serializable {
     String VIN;
     String fabricante;
     String modelo;
